@@ -1,0 +1,9 @@
+<!-- templates/success.html -->
+
+<h1>Website Text Successfully Fetched!</h1>
+{% if website.text_file %}
+  <p>You can now download the text:</p>
+  <a href="{{ website.text_file.url }}" download="{{ website.text_file.name }}">Download Text</a>
+{% else %}
+  <p>File is not available.</p>
+{% endif %}
