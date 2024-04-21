@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from Parser import views
 from Parser.views import add_website, success_view, download_text
 from django.conf import settings
 from django.conf.urls.static import static
@@ -26,6 +27,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('add_website/', add_website, name='add_website'),
     path('success/<int:website_id>/', success_view, name='success_url'),
+    path('register/', views.register, name='register'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,7 +1,9 @@
 import os
 
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
-from .forms import WebsiteForm
+from .forms import WebsiteForm, CustomUserCreationForm
 from django.http import HttpResponse, FileResponse
 
 from .models import Website
@@ -47,3 +49,33 @@ def download_text(request, website_id):
     response['Content-Disposition'] = f'attachment; filename={filename}'
     response.callback = lambda: os.remove(save_path)
     return response
+
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Выполняем вход для нового пользователя
+            # Перенаправляем на страницу после регистрации
+            return redirect('add_website')  # Замените 'index' на путь, куда вы хотите направить пользователя
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'register.html', {'form': form})
+
+def user_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('add_website')  # Замените 'index' на путь, куда вы хотите направить пользователя после входа
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
